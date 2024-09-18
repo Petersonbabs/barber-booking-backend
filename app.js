@@ -10,6 +10,7 @@ import appointmentRoutes from './routes/appointment.route.js'
 import usersRoutes from './routes/users.route.js'
 import serviceRoutes from './routes/service.route.js'
 import reviewRoutes from './routes/review.route.js'
+import galleryRoutes from './routes/gallery.route.js'
 
 
 // MIDDLEWARES
@@ -24,6 +25,7 @@ app.use('/api/v1/appointments', appointmentRoutes)
 app.use('/api/v1/users', usersRoutes)
 app.use('/api/v1/services', serviceRoutes)
 app.use('/api/v1/reviews', reviewRoutes)
+app.use('/api/v1/gallery', galleryRoutes)
 app.get('/api/v1', (req, res) => {
   res.send('Barber Appointment V1');
 });

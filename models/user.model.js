@@ -14,7 +14,8 @@ const UserSchema = new mongoose.Schema({
     },
     password: { type: String, required: true, select: false },
     profilePic: {
-        type: String
+        type: String,
+        default: 'https://static.vecteezy.com/system/resources/previews/001/840/618/non_2x/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg'
     },
     role: { type: String, default: 'client' }, // 'user' or 'barber'
 });

@@ -38,6 +38,26 @@ export const calculateAverageRating = async (reviews) => {
     return averageRating;
 };
 
+export const deleteReview = async (req, res) => {
+    try {
+        const review = await Reviews.findById(req.params.reviewId)
+        if(!review){
+            res.status(404).json({
+                status: 'error',
+                message: 'This review does not exist!',
+            })
+            return
+        }
+
+        res.status(200).json({
+            status: 'success',
+            message:'Review has been deleted!'
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 
 // ADD REVIEW
 export const addReview = async (req, res) => {

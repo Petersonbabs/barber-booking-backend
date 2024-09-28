@@ -3,7 +3,7 @@ dotEnv.config()
 import app from "./app.js";
 import connectToDataBase from './config/connectToDb.js';
 
-const PORT = process.env.PORT || 4500
+const PORT = process.env.PORT || 4000
 
 const connected = connectToDataBase()
 

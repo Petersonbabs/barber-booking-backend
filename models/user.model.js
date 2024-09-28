@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 
 const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    email: {type: String, required: true},
     phoneNumber: {
         type: String,
         unique: [true, 'A customer with this number already exist.'],

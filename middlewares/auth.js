@@ -27,7 +27,29 @@ export const verifyToken = async (req, res, next) => {
     })
     return
   }
-  const decoded = jwt.verify(token, process.env.jwt_secret);
+  const decoded = jwt.verify(token, process.env.jwt_secret, (err, user) => {
+    if(err){
+
+      if(err.name == 'TokenExpiredError'){
+        BlacklistTokens.create(token)
+        res.status(403).json({
+          status: 'error',
+          message: 'Token expired, login again'
+        })
+        return
+      }
+      res.status(403).json({
+        status: 'error',
+        message: 'Invalid token'
+      })
+      return
+    }
+  })
+
+  if(!decoded){
+    return
+  }
+    
   const user = await userModel.findById(decoded.id);
 
   if (!user) {

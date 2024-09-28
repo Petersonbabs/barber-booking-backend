@@ -7,14 +7,23 @@ import jwt from 'jsonwebtoken';
 
 // Register User
 export const register = async (req, res) => {
-  const {phoneNumber} = req.body
+  const {phoneNumber, profilePic, name, email} = req.body
  
   try {
+   
     let user = await User.findOne({ phoneNumber });
+    if(!name || !phoneNumber || !email){
+      res.status(400).json({
+        status: 'error',
+        message: 'Please complete the form.'
+      })
+      return
+    }
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
     }
-    user = await User.create(req.body)
+    const defaultProfilePic = (await fetch(`https://avatar.iran.liara.run/public/boy?username=${name}`)).url
+    user = await User.create({...req.body, profilePic: profilePic || defaultProfilePic || null})
     const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: process.env.jwt_exp });
     res.status(201).json({
       message: 'Restration successful!',

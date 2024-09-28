@@ -87,3 +87,24 @@ export const updateWork = async (req, res) => {
         console.log(error)
     }
 }
+
+// delete work
+export const deleteWork = async (req, res) => {
+    try {
+        const workExists = await Gallery.findById(req.params.workId)
+        if(!workExists){
+            res.status(404).json({
+                status: 'error',
+                message: 'This work does not exists'
+            })
+            return
+        }
+        await Gallery.findByIdAndDelete(req.params.workId, req.body)
+        res.status(200).json({
+            status: 'success',
+            message: 'Work has been deleted!',
+        })
+    } catch (error) {
+        console.log(error)
+    }
+} 

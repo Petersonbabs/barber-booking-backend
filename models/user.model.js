@@ -8,7 +8,6 @@ const UserSchema = new mongoose.Schema({
     phoneNumber: {
         type: String,
         unique: [true, 'A customer with this number already exist.'],
-        required: [true, 'Your number is required for us to reacvh you.']
     },
     location: {
         type: String
@@ -18,7 +17,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: 'https://static.vecteezy.com/system/resources/previews/001/840/618/non_2x/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg'
     },
-    role: { type: String, default: 'client' }, // 'user' or 'barber'
+    role: { type: String, default: 'client' }
 });
 
 // Hash password before saving the user

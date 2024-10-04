@@ -50,7 +50,7 @@ export const login = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
-    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: '30d' });
     res.status(200).json({
       message: 'login successful',
       user,
@@ -60,6 +60,45 @@ export const login = async (req, res) => {
   } catch (err) {
     console.log(err)
     res.status(500).send('Server error');
+  }
+}
+
+// sign in with google
+export const signInWithGoogle = async (req, res, next) => {
+  try {
+    const userExists = await User.find({email: req.body.email})
+    if(userExists){
+      res.status(200).json({
+        status: 'success',
+        message: 'login successful!',
+        user: userExists
+      })
+      return
+    }
+    if(!req.body.email){
+      res.status(403).json({
+        status: 'error',
+        message: 'email not provided.'
+      })
+      return
+    }
+    const user = await User.create(req.body)
+    if(!user){
+      res.status(404).json({
+        status: 'error',
+        message: 'unable to create account.'
+      })
+      return
+    }
+    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: '30d' });
+    res.status(201).json({
+      status: 'success',
+      message: 'login successful',
+      user,
+      token
+    })
+  } catch (error) {
+    console.log(error)
   }
 }
 

@@ -66,6 +66,8 @@ export const verifyToken = async (req, res, next) => {
 
 };
 
+
+
 export const isBarber = async ( req, res, next) => {
   
   if(req.user.role !== 'barber') {

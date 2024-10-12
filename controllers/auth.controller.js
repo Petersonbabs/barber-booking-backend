@@ -7,12 +7,12 @@ import jwt from 'jsonwebtoken';
 
 // Register User
 export const register = async (req, res) => {
-  const {phoneNumber, profilePic, name, email} = req.body
+  const { profilePic, name, email} = req.body
  
   try {
    
-    let user = await User.findOne({ phoneNumber });
-    if(!name || !phoneNumber || !email){
+    let user = await User.findOne({ email });
+    if(!name || !email){
       res.status(400).json({
         status: 'error',
         message: 'Please complete the form.'

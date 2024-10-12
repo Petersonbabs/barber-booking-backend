@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 
 
 // Register User
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
   const { profilePic, name, email} = req.body
  
   try {
@@ -33,15 +33,20 @@ export const register = async (req, res) => {
     
   } catch (err) {
     console.log(err)
-    res.status(500).send('Server error');
+    next(err)
   }
 }
 
 
 // Login Route
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
+    if(!email || !password){
+      res.status(403).json({
+        message: 'Complete the form'
+      })
+    }
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
@@ -59,7 +64,7 @@ export const login = async (req, res) => {
     
   } catch (err) {
     console.log(err)
-    res.status(500).send('Server error');
+    next(err)
   }
 }
 

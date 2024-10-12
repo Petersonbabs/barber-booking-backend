@@ -40,9 +40,9 @@ export const register = async (req, res) => {
 
 // Login Route
 export const login = async (req, res) => {
-  const { phoneNumber, password } = req.body;
+  const { email, password } = req.body;
   try {
-    const user = await User.findOne({ phoneNumber }).select('+password');
+    const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }

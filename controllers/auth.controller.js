@@ -70,17 +70,22 @@ export const login = async (req, res, next) => {
 
 // sign in with google
 export const signInWithGoogle = async (req, res, next) => {
+  const {email, } = req.body
   try {
-    const userExists = await User.find({email: req.body.email})
+    const userExists = await User.find({email})
+    
     if(userExists){
+      const access_token = jwt.sign({ id: userExists._id }, process.env.jwt_secret, { expiresIn: '30d' });
       res.status(200).json({
         status: 'success',
         message: 'login successful!',
-        user: userExists
+        user: userExists,
+        token: access_token
       })
       return
     }
-    if(!req.body.email){
+
+    if(email){
       res.status(403).json({
         status: 'error',
         message: 'email not provided.'
@@ -104,6 +109,7 @@ export const signInWithGoogle = async (req, res, next) => {
     })
   } catch (error) {
     console.log(error)
+    next(error)
   }
 }
 

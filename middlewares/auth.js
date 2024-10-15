@@ -6,11 +6,12 @@ import userModel from '../models/user.model.js';
 export const verifyToken = async (req, res, next) => {
 
   let token;
+  
 
   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1]
   }
-
+  console.log(token)
   if (!token) {
     res.status(401).json({
       status: "fail",
@@ -27,28 +28,9 @@ export const verifyToken = async (req, res, next) => {
     })
     return
   }
-  const decoded = jwt.verify(token, process.env.jwt_secret, (err, user) => {
-    if(err){
-
-      if(err.name == 'TokenExpiredError'){
-        BlacklistTokens.create(token)
-        res.status(403).json({
-          status: 'error',
-          message: 'Token expired, login again'
-        })
-        return
-      }
-      res.status(403).json({
-        status: 'error',
-        message: 'Invalid token'
-      })
-      return
-    }
-  })
-
-  if(!decoded){
-    return
-  }
+  const decoded = jwt.verify(token, process.env.jwt_secret)
+  const expirationDate = new Date(decoded.exp * 1000); // Multiply by 1000 to convert seconds to milliseconds
+console.log(expirationDate.toUTCString());
     
   const user = await userModel.findById(decoded.id);
 

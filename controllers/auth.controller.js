@@ -7,23 +7,23 @@ import jwt from 'jsonwebtoken';
 
 // Register User
 export const register = async (req, res, next) => {
-  const { profilePic, name, email} = req.body
+  const { profilePic, name, email, password} = req.body; 
  
   try {
    
     let user = await User.findOne({ email });
-    if(!name || !email){
-      res.status(400).json({
-        status: 'error',
-        message: 'Please complete the form.'
-      })
-      return
-    }
+    // if(!name || !email || !password){
+    //   res.status(400).json({
+    //     status: 'error',
+    //     message: 'Please complete the form.'
+    //   })
+    //   return
+    // }
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
     }
     const defaultProfilePic = (await fetch(`https://avatar.iran.liara.run/public/boy?username=${name}`)).url
-    user = await User.create({...req.body, profilePic: profilePic || defaultProfilePic || null})
+    user = await User.create({name: 'jj', email: 'hh', phoneNumber: 'kkkk', password: 'hh'})
     const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: process.env.jwt_exp });
     res.status(201).json({
       message: 'Restration successful!',
@@ -55,7 +55,7 @@ export const login = async (req, res, next) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
-    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: '30d' });
+    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: process.env.jwt_exp  });
     res.status(200).json({
       message: 'login successful',
       user,
@@ -70,10 +70,11 @@ export const login = async (req, res, next) => {
 
 // sign in with google
 export const signInWithGoogle = async (req, res, next) => {
-  const {email, } = req.body
+  const {email } = req.body
+ 
   try {
-    const userExists = await User.find({email})
-    
+    const userExists = await User.findOne({email})
+
     if(userExists){
       const access_token = jwt.sign({ id: userExists._id }, process.env.jwt_secret, { expiresIn: '30d' });
       res.status(200).json({
@@ -85,14 +86,15 @@ export const signInWithGoogle = async (req, res, next) => {
       return
     }
 
-    if(email){
+    if(!email){
       res.status(403).json({
         status: 'error',
         message: 'email not provided.'
       })
       return
     }
-    const user = await User.create(req.body)
+    const user = await User.create({password: 'test1234', ...req.body})
+    console.log(user)
     if(!user){
       res.status(404).json({
         status: 'error',
@@ -100,7 +102,7 @@ export const signInWithGoogle = async (req, res, next) => {
       })
       return
     }
-    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: '30d' });
+    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: process.env.jwt_exp  });
     res.status(201).json({
       status: 'success',
       message: 'login successful',

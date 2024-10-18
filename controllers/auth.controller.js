@@ -22,8 +22,8 @@ export const register = async (req, res, next) => {
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
     }
-    const defaultProfilePic = (await fetch(`https://avatar.iran.liara.run/public/boy?username=${name}`)).url
-    user = await User.create({ ...req.body, profilePic: profilePic || defaultProfilePic || null })
+  
+    user = await User.create(req.body)
     const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: process.env.jwt_exp });
     res.status(201).json({
       message: 'Restration successful!',

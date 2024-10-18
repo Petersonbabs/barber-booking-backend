@@ -7,30 +7,30 @@ import jwt from 'jsonwebtoken';
 
 // Register User
 export const register = async (req, res, next) => {
-  const { profilePic, name, email, password} = req.body; 
- 
+  const { profilePic, name, email, password } = req.body;
+
   try {
-   
+
     let user = await User.findOne({ email });
-    // if(!name || !email || !password){
-    //   res.status(400).json({
-    //     status: 'error',
-    //     message: 'Please complete the form.'
-    //   })
-    //   return
-    // }
+    if(!name || !email || !password){
+      res.status(400).json({
+        status: 'error',
+        message: 'Please complete the form.'
+      })
+      return
+    }
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
     }
     const defaultProfilePic = (await fetch(`https://avatar.iran.liara.run/public/boy?username=${name}`)).url
-    user = await User.create({name: 'jj', email: 'hh', phoneNumber: 'kkkk', password: 'hh'})
+    user = await User.create({ ...req.body, profilePic: profilePic || defaultProfilePic || null })
     const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: process.env.jwt_exp });
     res.status(201).json({
       message: 'Restration successful!',
       user,
       token
     })
-    
+
   } catch (err) {
     console.log(err)
     next(err)
@@ -42,7 +42,7 @@ export const register = async (req, res, next) => {
 export const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    if(!email || !password){
+    if (!email || !password) {
       res.status(403).json({
         message: 'Complete the form'
       })
@@ -55,13 +55,13 @@ export const login = async (req, res, next) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
-    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: process.env.jwt_exp  });
+    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: process.env.jwt_exp });
     res.status(200).json({
       message: 'login successful',
       user,
       token
     })
-    
+
   } catch (err) {
     console.log(err)
     next(err)
@@ -70,39 +70,39 @@ export const login = async (req, res, next) => {
 
 // sign in with google
 export const signInWithGoogle = async (req, res, next) => {
-  const {email } = req.body
- 
+  const { email } = req.body
+
   try {
-    const userExists = await User.findOne({email})
+    // const userExists = await User.findOne({ email })
 
-    if(userExists){
-      const access_token = jwt.sign({ id: userExists._id }, process.env.jwt_secret, { expiresIn: '30d' });
-      res.status(200).json({
-        status: 'success',
-        message: 'login successful!',
-        user: userExists,
-        token: access_token
-      })
-      return
-    }
+    // if (userExists) {
+    //   const access_token = jwt.sign({ id: userExists._id }, process.env.jwt_secret, { expiresIn: '30d' });
+    //   res.status(200).json({
+    //     status: 'success',
+    //     message: 'login successful!',
+    //     user: userExists,
+    //     token: access_token
+    //   })
+    //   return
+    // }
 
-    if(!email){
-      res.status(403).json({
-        status: 'error',
-        message: 'email not provided.'
-      })
-      return
-    }
-    const user = await User.create({password: 'test1234', ...req.body})
+    // if (!email) {
+    //   res.status(403).json({
+    //     status: 'error',
+    //     message: 'email not provided.'
+    //   })
+    //   return
+    // }
+    const user = await User.create({ password: 'test1234', ...req.body })
     console.log(user)
-    if(!user){
+    if (!user) {
       res.status(404).json({
         status: 'error',
         message: 'unable to create account.'
       })
       return
     }
-    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: process.env.jwt_exp  });
+    const token = jwt.sign({ id: user._id }, process.env.jwt_secret, { expiresIn: process.env.jwt_exp });
     res.status(201).json({
       status: 'success',
       message: 'login successful',

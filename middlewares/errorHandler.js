@@ -48,6 +48,10 @@ const errorHandler = (err, req, res, next) => {
         return
     } else if (err.name === 'ValidationError') {
         return handleValidationErrors(err, res);
+    } else {
+        res.status(404).json({
+            message: 'server error' +  err
+        })
     }
     next();
 }
